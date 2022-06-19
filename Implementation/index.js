@@ -6,10 +6,25 @@ class Block{
     this.data = data; 
     this.previousHash = previousHash;
     this.hash = this.calculateHash(); 
+    this.nonce = 0; 
   }
+
+  mineBlock(difficulty) {
+    while(
+      this.hash.substring(0,difficulty)!==Array(difficulty+1).join("0")
+    ) {
+      this.nonce++; 
+      this.hash = this.calculateHash(); 
+    }
+    console.log("Mining done: " + this.hash); 
+  }
+
   calculateHash(){
     return sha256(
-      this.timestamp + JSON.stringify(this.data) + this.previousHash
+      this.timestamp + 
+      JSON.stringify(this.data) + 
+      this.previousHash + 
+      this.nonce
     ).toString(); 
   }
 }
@@ -17,6 +32,7 @@ class Block{
 class Blockchain {
   constructor(){
     this.chain = [this.generateGenesisBlock()];
+    this.difficulty = 4; 
   }
 
   generateGenesisBlock() {
@@ -29,7 +45,7 @@ class Blockchain {
 
   addBlock(newBlock){
     newBlock.previousHash = this.getLatestBlock().hash; 
-    newBlock.hash = newBlock.calculateHash();
+    newBlock.mineBlock(this.difficulty); 
     this.chain.push(newBlock); 
   }
   isBlockchainValid() {
@@ -48,10 +64,11 @@ class Blockchain {
 }
 
 const josscoin = new Blockchain(); 
-const block = new Block('2019-01-01', {amount: 5} ); 
+const block1 = new Block('2019-01-01', {amount: 5} ); 
 
-josscoin.addBlock(block); 
-console.log(josscoin.isBlockchainValid());
+josscoin.addBlock(block1); 
+console.log(josscoin);
 
-josscoin.chain[1].data = "HACKED"; 
-console.log(josscoin.isBlockchainValid());
+const block2 = new Block('2019-01-02', {amount: 10} ); 
+josscoin.addBlock(block2); 
+console.log(josscoin);
