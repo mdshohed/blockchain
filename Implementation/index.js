@@ -29,6 +29,15 @@ class Block{
       this.nonce
     ).toString(); 
   }
+
+  hasValidTransactions() {
+    for (const tx of this.transactions) {
+      if( !tx.isValid()){
+        return false; 
+      }
+    }
+    return true; 
+  }
 }
 
 class Transaction{
@@ -51,7 +60,7 @@ class Transaction{
     this.signature = signature.toDER(); 
   }
 
-  idValid() {
+  isValid() {
     if(this.fromAddress === null) true; 
     if( !this.signature || this.signature.length === 0) {
       throw new Error('No signature found'); 
