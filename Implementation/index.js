@@ -73,7 +73,7 @@ class Transaction{
 class Blockchain {
   constructor(){
     this.chain = [this.generateGenesisBlock()];
-    this.difficulty = 5; 
+    this.difficulty = 4; 
 
     this.pendingTransactions = []; 
     this.miningReward = 10;
@@ -90,14 +90,24 @@ class Blockchain {
   createTransaction(transaction) {
     this.pendingTransactions.push(transaction); 
   }
-  
+
   addTransaction(transaction){
+
     if( !transaction.fromAddress || !transaction.toAddress) {
       throw new Error('Cannot process transaction'); 
     }
+
     if( !transaction.isValid()) {
       throw new Error('Invalid transaction'); 
     }
+
+    if(transaction.amount < 0) {
+      throw new Error("Invalid transaction amount"); 
+    }
+    // if(transaction.amount > this.getBalanceOfAddress(transaction.fromAddress)){
+    //   throw new Error("Not enough balance"); 
+    // }
+
     this.pendingTransactions.push(transaction); 
   }
 

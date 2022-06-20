@@ -15,5 +15,10 @@ tx1.signTransaction(key);
 josscoin.addTransaction(tx1); 
 
 josscoin.minePendingTransaction(walletNumber); 
-
 console.log(josscoin.getBalanceOfAddress(walletNumber));
+
+josscoin.minePendingTransaction(walletNumber); 
+console.log(josscoin.getBalanceOfAddress(walletNumber));
+
+console.log(josscoin.getBalanceOfAddress("randomAddress"));
+console.log(josscoin.isBlockchainValid());
