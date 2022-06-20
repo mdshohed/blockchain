@@ -29,7 +29,7 @@ class Block{
   }
 }
 
-class Transactions{
+class Transaction{
   constructor(fromAddress, toAddress, amount) {
     this.fromAddress = fromAddress; 
     this.toAddress = toAddress; 
@@ -40,7 +40,9 @@ class Transactions{
 class Blockchain {
   constructor(){
     this.chain = [this.generateGenesisBlock()];
-    this.difficulty = 4; 
+    this.difficulty = 5; 
+
+    this.pendingTransactions = []; 
   }
 
   generateGenesisBlock() {
@@ -49,6 +51,17 @@ class Blockchain {
   
   getLatestBlock() {
     return this.chain[this.chain.length - 1]; 
+  }
+
+  createTransaction(transaction){
+    this.pendingTransactions.push(transaction); 
+  }
+
+  minePendingTransaction() {
+    let block = new Block(Date.now(), this.pendingTransactions); 
+    block.mineBlock(this.difficulty); 
+    this.chain.push(block); 
+    this.pendingTransactions = []; 
   }
 
   addBlock(newBlock){
@@ -69,14 +82,29 @@ class Blockchain {
     }
     return true; 
   }
+
+  getBalanceOfAddress(address) {
+    let balance = 0;
+    for (const  block of this.chain) {
+      for (const trans of block.transactions) {
+        
+        if(trans.fromAddress === address) {
+          balance -= trans.amount; 
+        }
+        if( trans.toAddress === address) {
+          balance += trans.amount; 
+        }
+      }
+    }
+    return balance; 
+  }
 }
 
 const josscoin = new Blockchain(); 
-const block1 = new Block('2019-01-01', {amount: 5} ); 
+josscoin.createTransaction(new Transaction('address1', 'address2', 100)); 
+josscoin.createTransaction(new Transaction('address2', 'address1', 50));
 
-josscoin.addBlock(block1); 
-console.log(josscoin);
-
-const block2 = new Block('2019-01-02', {amount: 10} ); 
-josscoin.addBlock(block2); 
-console.log(josscoin);
+josscoin.minePendingTransaction(); 
+console.log(josscoin.getBalanceOfAddress('address1'));
+console.log(josscoin.getBalanceOfAddress('address2'));
+// console.log(josscoin);
