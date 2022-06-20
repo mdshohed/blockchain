@@ -1,4 +1,6 @@
 const sha256 = require("crypto-js/sha256"); 
+const EC = require('elliptic').ec;
+var ec = new EC('secp256k1');
 
 class Block{
   constructor(timestamp, transactions, previousHash = ""){
@@ -34,6 +36,28 @@ class Transaction{
     this.fromAddress = fromAddress; 
     this.toAddress = toAddress; 
     this.amount = amount; 
+  }
+
+  calculateHash() {
+    return sha256(this.fromAddress + this.toAddress + this.amount); 
+  }
+
+  signTransaction(key) {
+    if(key.getPublic('hex') !== this.fromAddress) {
+      throw new Error('You do not have access'); 
+    }
+    const hashTx = this.calculateHash();
+    const signature = key.sign(hashTx, 'base64'); 
+    this.signature = signature.toDER(); 
+  }
+
+  idValid() {
+    if(this.fromAddress === null) true; 
+    if( !this.signature || this.signature.length === 0) {
+      throw new Error('No signature found'); 
+    }
+    const key = ec.keyFromPublic(this.fromAddress, 'hex'); 
+    return key.verify(this.calculateHash(), this.signature);
   }
 }
 
