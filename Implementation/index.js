@@ -87,7 +87,13 @@ class Blockchain {
     return this.chain[this.chain.length - 1]; 
   }
 
-  createTransaction(transaction){
+  addTransaction(transaction){
+    if( transaction.fromAddress || !transaction.toAddress) {
+      throw new Error('Cannot process transaction'); 
+    }
+    if( !transaction.isValid()) {
+      throw new Error('Invalid transaction'); 
+    }
     this.pendingTransactions.push(transaction); 
   }
 
@@ -116,6 +122,9 @@ class Blockchain {
       if( currentBlock.previousHash !== previousBlock.hash) {
         return false; 
       }
+      if(!currentBlock.hasValidTransactions()){
+        return false; 
+      }
     }
     return true; 
   }
@@ -138,8 +147,8 @@ class Blockchain {
 }
 
 const josscoin = new Blockchain(); 
-josscoin.createTransaction(new Transaction('address1', 'address2', 100)); 
-josscoin.createTransaction(new Transaction('address2', 'address1', 50));
+josscoin.addTransaction(new Transaction('address1', 'address2', 100)); 
+josscoin.addTransaction(new Transaction('address2', 'address1', 50));
 
 josscoin.minePendingTransaction('nowshad-address'); 
 console.log(josscoin.getBalanceOfAddress('nowshad-address'));
