@@ -48,7 +48,7 @@ class Transaction{
   }
 
   calculateHash() {
-    return sha256(this.fromAddress + this.toAddress + this.amount); 
+    return sha256(this.fromAddress + this.toAddress + this.amount).toString(); 
   }
 
   signTransaction(key) {
@@ -87,8 +87,12 @@ class Blockchain {
     return this.chain[this.chain.length - 1]; 
   }
 
+  createTransaction(transaction) {
+    this.pendingTransactions.push(transaction); 
+  }
+  
   addTransaction(transaction){
-    if( transaction.fromAddress || !transaction.toAddress) {
+    if( !transaction.fromAddress || !transaction.toAddress) {
       throw new Error('Cannot process transaction'); 
     }
     if( !transaction.isValid()) {
@@ -112,6 +116,7 @@ class Blockchain {
     newBlock.mineBlock(this.difficulty); 
     this.chain.push(newBlock); 
   }
+
   isBlockchainValid() {
     for(let i = 1; i<this.chain.length; i++) {
       const currentBlock = this.chain[i];
@@ -146,13 +151,8 @@ class Blockchain {
   }
 }
 
-const josscoin = new Blockchain(); 
-josscoin.addTransaction(new Transaction('address1', 'address2', 100)); 
-josscoin.addTransaction(new Transaction('address2', 'address1', 50));
-
-josscoin.minePendingTransaction('nowshad-address'); 
-console.log(josscoin.getBalanceOfAddress('nowshad-address'));
-
-josscoin.minePendingTransaction('nowshad-address'); 
-console.log(josscoin.getBalanceOfAddress('nowshad-address'));
-// console.log(josscoin);
+module.exports = {
+  Block, 
+  Transaction, 
+  Blockchain
+}
