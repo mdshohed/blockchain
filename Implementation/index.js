@@ -109,10 +109,6 @@ josscoin.createTransaction(new Transaction('address1', 'address2', 100));
 josscoin.createTransaction(new Transaction('address2', 'address1', 50));
 
 josscoin.minePendingTransaction('nowshad-address'); 
-
-
-console.log(josscoin.getBalanceOfAddress('address1'));
-console.log(josscoin.getBalanceOfAddress('address2'));
 console.log(josscoin.getBalanceOfAddress('nowshad-address'));
 
 josscoin.minePendingTransaction('nowshad-address'); 
