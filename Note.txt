@@ -22,3 +22,10 @@ https://www.blockchain.com/explorer
 Job market: 
 ----------
 https://ethlance.com/
+
+
+Solidity Smart Contact: 
+-------------------------------
+https://remix.ethereum.org/
+
+
